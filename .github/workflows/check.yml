@@ -1,0 +1,30 @@
+name: Check Code
+
+on:
+  push:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - uses: actions/setup-python@v3
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.CHECK_ROLE }}
+          aws-region: us-west-2
+          mask-aws-account-id: true
+      - name: Run GetCallerIdentity
+        run: aws sts get-caller-identity
+      - uses: hashicorp/setup-terraform@v3
+      - name: Run
+        run: sh all.sh
+      - name: check if file is modified
+        run: git status
