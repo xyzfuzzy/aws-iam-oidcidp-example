@@ -1,0 +1,3 @@
+tmp
+2_terraform/.terraform*
+2_terraform/terraform.tfstate*
